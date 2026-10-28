@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Book List</h1>
+
+    <label for="bookSelect">Choose a book:</label>
+    <select id="bookSelect">
+        <option value="">-- Select a book --</option>
+    </select>
+
+    <p id="bookDetails"></p>
+
+    <ul id="bookList"></ul>
+
+    <script>
+
+        const booksUrl = "https://raw.githubusercontent.com/HomeSix/Lab-6-webdev/main/books.json";
+
+        fetch(booksUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+
+                const list = document.getElementById("bookList");
+                const select = document.getElementById("bookSelect");
+                const details = document.getElementById("bookDetails");
+
+                data.Books.forEach(book => {
+
+                    // one <option> per book title
+                    const option = document.createElement("option");
+                    option.value = book.title;
+                    option.textContent = book.title;
+                    select.appendChild(option);
+                });
+
+                select.addEventListener("change", () => {
+                    const book = data.Books.find(b => b.title === select.value);
+                    details.textContent = book
+                        ? book.title + " by " + book.author +
+                          " (" + book.publicationYear + ") - " + book.genres.join(", ")
+                        : "";
+                });
+            })
+            .catch(error => console.error("Failed to load books:", error));
+
+    </script>
+</body>
+
+</html>
